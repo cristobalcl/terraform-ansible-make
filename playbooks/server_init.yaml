@@ -1,0 +1,56 @@
+- name: Initialize server
+  hosts: all
+  remote_user: root
+  gather_facts: False
+  tasks:
+    - name: Make sure we have a 'wheel' group
+      group:
+        name: wheel
+        state: present
+
+    - name: Allow 'wheel' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%wheel'
+        line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Add user 'cristobal'
+      user:
+        name: cristobal
+        state: present
+        create_home: yes
+        shell: /bin/bash
+        # groups: sudo
+        groups: wheel
+        append: yes
+
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: cristobal
+        state: present
+        key: "{{ lookup('file', lookup('env', 'PUB_KEY')) }}"
+
+    - name: Change SSH port
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp="#Port 22"
+                  line="Port 4444"
+                  state=present
+
+    - name: Disallow SSH password
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp="^PasswordAuthentication"
+                  line="PasswordAuthentication no"
+                  state=present
+
+    - name: Disallow root SSH access
+      lineinfile: dest=/etc/ssh/sshd_config
+                  regexp="^PermitRootLogin"
+                  line="PermitRootLogin no"
+                  state=present
+      notify: Restart ssh
+
+  handlers:
+    - name: Restart ssh
+      service: name=ssh state=restarted

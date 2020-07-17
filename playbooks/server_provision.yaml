@@ -1,0 +1,64 @@
+- name: Provision server
+  hosts: all
+  remote_user: cristobal
+  gather_facts: False
+  tasks:
+    - name: Upgrade all packages to the latest version
+      become: yes
+      apt:
+        name: "*"
+        state: latest
+
+    # Install Docker
+    - name: Install required system packages
+      become: yes
+      apt:
+        name={{ item }}
+        state=latest
+        update_cache=yes
+      loop: [
+        "apt-transport-https", "ca-certificates", "curl", "software-properties-common",
+        "python3-pip", "virtualenv", "python3-setuptools"
+        ]
+
+    - name: Add Docker GPG apt Key
+      become: yes
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      become: yes
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      become: yes
+      apt:
+        update_cache=yes
+        name=docker-ce
+        state=latest
+
+    - name: Install docker-compose
+      become: yes
+      apt:
+        name=docker-compose
+        state=latest
+
+    - name: Install Docker Module for Python
+      become: yes
+      pip:
+        name: docker
+
+    # Hello World Nginx
+    - name: Restart docker-nginx-hello-world
+      become: yes
+      docker_container:
+        name: hello-world
+        image: nginx
+        state: started
+        restart: yes
+        restart_policy: unless-stopped
+        ports:
+          - "80:80"
