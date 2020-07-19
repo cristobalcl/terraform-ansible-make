@@ -20,7 +20,6 @@ inventory config.sh:
 provision:      ## Apply changes to infraestructure
 provision: inventory config.sh
 	. config.sh
-	echo $$PVT_KEY
 	ssh-add $$PVT_KEY
 	ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbooks/server_provision.yaml
 
