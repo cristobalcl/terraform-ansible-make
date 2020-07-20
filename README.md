@@ -46,7 +46,7 @@ You should get the Nginx default page.
 If you run `make provision` again, only the provision Ansible playbook should run. If you make changes in the infraestructure (Terraform files) you can apply those changes with:
 
 ```
-make provision
+make apply
 ```
 
 Don't forget to destroy everything after doing your tests:
