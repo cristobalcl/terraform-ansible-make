@@ -1,7 +1,7 @@
 Terraform + Ansible
 ===================
 
-Companion project for the article series: [Terraform + Ansible: tips & tricks](https://medium.com/@cristobalcl/terraform-ansible-tips-tricks-3873a536eecf).
+Companion project for the article: [Terraform + Ansible: tips & tricks](https://medium.com/@cristobalcl/terraform-ansible-tips-tricks-3873a536eecf).
 
 Setup
 -----
