@@ -8,22 +8,22 @@ help:           ## Show this help.
 init:           ## Init Terraform
 	terraform init
 
-plan:           ## Calculate infraestructure changes
+plan:           ## Calculate infrastructure
 	terraform plan
 
-apply:          ## Apply changes to infraestructure
+apply:          ## Apply changes to infrastructure
 	terraform apply
 
 inventory config.sh:
 	terraform apply
 
-provision:      ## Apply changes to infraestructure
+provision:      ## Apply changes to infrastructure
 provision: inventory config.sh
 	. config.sh
 	ssh-add $$PVT_KEY
 	ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i inventory playbooks/server_provision.yaml
 
-destroy:        ## Destroy infraestructure
+destroy:        ## Destroy infrastructure
 	terraform destroy
 
 all: help
